@@ -106,12 +106,12 @@ Returns:
 
     # make a caption and headings for a table of results
     caption = "Beam Power Dependence Results"
-    headings = [["Output Power", "Input Power", "BPM Current", "X Position", "Y Position"],
-                ["(dBm)", "(dBm)", "(mA)", "(mm)", "(mm)"]]
-    data = [output_power, input_power, beam_current, X_pos, Y_pos]
+    headings = [["Output Power", "Input Power", "BPM Current", "X Position", "Y Position", "ADC Sum"],
+                ["(dBm)", "(dBm)", "(mA)", "(mm)", "(mm)", "(Counts)"]]
+    data = [output_power, input_power, beam_current, X_pos, Y_pos, ADC_sum]
 
     # copy the values to the report
-    report.add_table_to_test('|c|c|c|c|c|', data, headings, caption)
+    report.add_table_to_test('|c|c|c|c|c|c|', data, headings, caption)
 
     # Get the plot values in a format thats easy to iterate
     format_plot = []# x axis, y axis, x axis title, y axis title, title of file, caption
@@ -119,7 +119,7 @@ Returns:
     format_plot.append((output_power, beam_current, 'RF Source Power Output (dBm)', 'Beam Current at BPM (mA)', "power_vs_current.pdf"))
     format_plot.append((output_power, X_pos, 'RF Source Power Output (dBm)', 'Horizontal Beam Position (mm)', "power_vs_X.pdf"))
     format_plot.append((output_power, Y_pos, 'RF Source Power Output (dBm)', 'Vertical Beam Position (mm)', "power_vs_Y.pdf"))
-    format_plot.append((output_power, ADC_sum, 'RF Source Power Output (dBm)', 'A+B+C+D ADC Sum (counts)', 'power_vs_ADC_sum.pdf'))
+    format_plot.append((output_power, ADC_sum, 'RF Source Power Output (dBm)', 'ADC Sum (counts)', 'power_vs_ADC_sum.pdf'))
 
     # plot all of the graphs
     for index in format_plot:

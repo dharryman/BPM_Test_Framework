@@ -53,6 +53,7 @@ def Scaled_amplitude_fill_pattern_test(RF,
     bpm_Ypos = np.array([])
     bpm_current = np.array([])
     rf_output = np.array([])
+    ADC_sum = np.array([])
 
 
     time.sleep(settling_time)
@@ -67,17 +68,18 @@ def Scaled_amplitude_fill_pattern_test(RF,
         bpm_current = np.append(bpm_current, BPM.get_beam_current())
         bpm_Xpos = np.append(bpm_Xpos, BPM.get_X_position())
         bpm_Ypos = np.append(bpm_Ypos, BPM.get_Y_position())
+        ADC_sum = np.append(ADC_sum, BPM.get_ADC_sum())
 
     report.setup_test(test_name, intro_text, device_names, parameter_names)
 
     # make a caption and headings for a table of results
     caption = "Changing gate duty cycle, with fixed RF amplitude "
-    headings = [["Duty Cycle","Output Power" , "Input Power", "BPM Current", "X Position", "Y Position"],
-                ["(0-1)","(dBm)", "(dBm)", "(mA)", "(mm)", "(mm)"]]
-    data = [dutycycle, rf_output ,bpm_power, bpm_current, bpm_Xpos, bpm_Ypos]
+    headings = [["Duty Cycle","Output Power" , "Input Power", "BPM Current", "X Position", "Y Position", "ADC Sum"],
+                ["(0-1)","(dBm)", "(dBm)", "(mA)", "(mm)", "(mm)", "(Counts)"]]
+    data = [dutycycle, rf_output ,bpm_power, bpm_current, bpm_Xpos, bpm_Ypos, ADC_sum]
 
     # copy the values to the report
-    report.add_table_to_test('|c|c|c|c|c|c|', data, headings, caption)
+    report.add_table_to_test('|c|c|c|c|c|c|c|', data, headings, caption)
 
     # Get the plot values in a format thats easy to iterate
     format_plot = []# x axis, y axis, x axis title, y axis title, title of file, caption
@@ -86,6 +88,7 @@ def Scaled_amplitude_fill_pattern_test(RF,
     format_plot.append((dutycycle, bpm_current, 'Gating signal duty cycle (0-1)', 'Beam Current at BPM (mA)', "scaled_DC_vs_current.pdf"))
     format_plot.append((dutycycle, bpm_Xpos, 'Gating signal duty cycle (0-1)', 'Horizontal Beam Position (mm)', "scaled_DC_vs_X.pdf"))
     format_plot.append((dutycycle, bpm_Ypos, 'Gating signal duty cycle (0-1)', 'Vertical Beam Position (mm)', "scaled_DC_vs_Y.pdf"))
+    format_plot.append((dutycycle, ADC_sum, 'Gating signal duty cycle (0-1)', 'ADC Sum (counts)', "scaled_DC_vs_ADC_Sum.pdf"))
 
     # plot all of the graphs
     for index in format_plot:

@@ -75,6 +75,7 @@ def Fixed_amplitude_fill_pattern_test(RF,
     bpm_Xpos = np.array([])
     bpm_Ypos = np.array([])
     bpm_current = np.array([])
+    ADC_sum = np.array([])
 
     test_name = __name__
     test_name = test_name.rsplit("Tests.")[1]
@@ -100,6 +101,8 @@ def Fixed_amplitude_fill_pattern_test(RF,
         bpm_current = np.append(bpm_current, BPM.get_beam_current())
         bpm_Xpos = np.append(bpm_Xpos, BPM.get_X_position())
         bpm_Ypos = np.append(bpm_Ypos, BPM.get_Y_position())
+        ADC_sum = np.append(ADC_sum, BPM.get_ADC_sum())
+
 
     RF.turn_off_RF()
     GS.turn_off_modulation()
@@ -107,12 +110,12 @@ def Fixed_amplitude_fill_pattern_test(RF,
     report.setup_test(test_name, intro_text, device_names, parameter_names)
 
     caption = "Changing gate duty cycle, with fixed RF amplitude "
-    headings = [["Duty Cycle", "Input Power", "BPM Current", "X Position", "Y Position"],
-                ["(0-1)", "(dBm)", "(mA)", "(mm)", "(mm)"]]
-    data = [dutycycle, bpm_power, bpm_current, bpm_Xpos, bpm_Ypos]
+    headings = [["Duty Cycle", "Input Power", "BPM Current", "X Position", "Y Position", "ADC Sum"],
+                ["(0-1)", "(dBm)", "(mA)", "(mm)", "(mm)", "(Counts)"]]
+    data = [dutycycle, bpm_power, bpm_current, bpm_Xpos, bpm_Ypos, ADC_sum]
 
     # copy the values to the report
-    report.add_table_to_test('|c|c|c|c|c|', data, headings, caption)
+    report.add_table_to_test('|c|c|c|c|c|c|', data, headings, caption)
 
     # make a caption and headings for a table of results
 
@@ -123,6 +126,7 @@ def Fixed_amplitude_fill_pattern_test(RF,
     format_plot.append((dutycycle, bpm_current, 'Gating signal duty cycle (0-1)', 'Beam Current at BPM (mA)', "DC_vs_current.pdf"))
     format_plot.append((dutycycle, bpm_Xpos, 'Gating signal duty cycle (0-1)', 'Horizontal Beam Position (mm)', "DC_vs_X.pdf"))
     format_plot.append((dutycycle, bpm_Ypos, 'Gating signal duty cycle (0-1)', 'Vertical Beam Position (mm)', "DC_vs_Y.pdf"))
+    format_plot.append((dutycycle, ADC_sum, 'Gating signal duty cycle (0-1)', 'ADC Sum (counts)', 'DC_vs_ADC_sum.pdf'))
 
     # plot all of the graphs
     for index in format_plot:

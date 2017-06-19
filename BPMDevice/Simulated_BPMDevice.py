@@ -1,6 +1,9 @@
 from Generic_BPMDevice import *
 #import sys, os
 #sys.path.insert(0, os.path.abspath('..'))
+from pkg_resources import require
+require("numpy")
+import numpy as np
 
 
 class Simulated_BPMDevice(Generic_BPMDevice):
@@ -83,7 +86,9 @@ class Simulated_BPMDevice(Generic_BPMDevice):
         elif self.GateSim.get_modulation_state() == False:
             return self.RFSim.get_output_power()[0] - self.attenuation
         else:
-            return (self.GateSim.get_pulse_dutycycle()*self.RFSim.get_output_power()[0]) - self.attenuation
+            dutycycle = self.GateSim.get_pulse_dutycycle()
+            log_cycle = 20 * np.log10(dutycycle)
+            return (self.RFSim.get_output_power()[0] - np.absolute(log_cycle)) - self.attenuation
 
     def get_raw_BPM_buttons(self):
         """Override method, gets the raw signal from each BPM.

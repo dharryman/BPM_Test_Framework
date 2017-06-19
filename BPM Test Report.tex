@@ -1,0 +1,337 @@
+\documentclass[a4paper, 11pt]{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+\usepackage{graphicx}%
+%
+\newcommand\tab[1][1cm]{\hspace*{#1}}%
+\usepackage{fullpage}%
+\usepackage{graphicx}%
+%
+\begin{document}%
+\normalsize%
+\noindent%
+\large\textbf{Diamond Light Source Ltd} \hfill\large\textbf{Date: \today}%
+\\\normalsize Beam Diagnostics Group \hfill\\%
+\\\\\includegraphics[width = 1\textwidth]{./Latex_Report/Logo.PNG}\\\\%
+\section*{BPM Test Report}%
+This is a \LaTeX test report for the, beam profile monitor electronics that are used at Diamond. In this document the different tests will be recorded in their own individual section. along with the specific parameters that are being tested and the test method used.\\\\%
+\clearpage%
+\tableofcontents%
+\listoffigures%
+\clearpage%
+\section{Beam Power Dependance}%
+Text that will describe the test\\\\%
+\textbf{The devices used for this test are:}\\\\%
+RF Source Rigol Technologies,DSG3030,DSG3B174500308,00.01.06\\%
+Libera BPM with the Epics ID "TS-DI-EBPM-04:" and the MAC Address "00:d0:50:31:03:b9"\\%
+\\%
+\textbf{The parameters used in this test are:}\\\\%
+Frequency: 499.6817682MHz\\%
+Starting output power: -70dBm\\%
+Final output power: -60dBm\\%
+Samples: 30\\%
+Settling time: 3s\\
+
+%
+\begin{figure}[htbp]%
+\centering%
+\caption{Beam Power Dependence Results}%
+\begin{tabular}{|c|c|c|c|c|c|}%
+\hline%
+Output Power&Input Power&BPM Current&X Position&Y Position&ADC Sum\\%
+(dBm)&(dBm)&(mA)&(mm)&(mm)&(Counts)\\%
+\hline%
+{-}70.0&{-}83.55&0.07&0.48&0.54&4699298.0\\%
+{-}69.66&{-}83.24&0.07&0.47&0.53&4868309.0\\%
+{-}69.31&{-}82.92&0.07&0.47&0.52&5050801.0\\%
+{-}68.97&{-}82.61&0.07&0.47&0.51&5236309.0\\%
+{-}68.62&{-}82.31&0.08&0.47&0.5&5417115.0\\%
+{-}68.28&{-}82.0&0.08&0.46&0.49&5615912.0\\%
+{-}67.93&{-}81.67&0.08&0.46&0.48&5834238.0\\%
+{-}67.59&{-}81.35&0.09&0.45&0.47&6055346.0\\%
+{-}67.24&{-}81.02&0.09&0.45&0.46&6285617.0\\%
+{-}66.9&{-}80.69&0.09&0.45&0.45&6533428.0\\%
+{-}66.55&{-}80.36&0.1&0.45&0.44&6784100.0\\%
+{-}66.21&{-}80.04&0.1&0.45&0.43&7040658.0\\%
+{-}65.86&{-}79.7&0.1&0.44&0.43&7314827.0\\%
+{-}65.52&{-}79.38&0.11&0.44&0.42&7596200.0\\%
+{-}65.17&{-}79.04&0.11&0.45&0.41&7898990.0\\%
+{-}64.83&{-}78.71&0.12&0.44&0.4&8205531.0\\%
+{-}64.48&{-}78.36&0.12&0.44&0.39&8536338.0\\%
+{-}64.14&{-}78.03&0.13&0.45&0.39&8872140.0\\%
+{-}63.79&{-}77.69&0.13&0.45&0.38&9229760.0\\%
+{-}63.45&{-}77.26&0.14&0.45&0.37&9692182.0\\%
+{-}63.1&{-}76.92&0.14&0.45&0.36&10082324.0\\%
+{-}62.76&{-}76.57&0.15&0.45&0.35&10488923.0\\%
+{-}62.41&{-}76.25&0.15&0.45&0.34&10888333.0\\%
+{-}62.07&{-}75.92&0.16&0.45&0.33&11315891.0\\%
+{-}61.72&{-}75.57&0.17&0.45&0.33&11777270.0\\%
+{-}61.38&{-}75.24&0.17&0.45&0.32&12232080.0\\%
+{-}61.03&{-}74.91&0.18&0.44&0.31&12702607.0\\%
+{-}60.69&{-}74.56&0.19&0.44&0.31&13222240.0\\%
+{-}60.34&{-}74.22&0.19&0.43&0.3&13749432.0\\%
+{-}60.0&{-}73.89&0.2&0.43&0.3&14290258.0\\%
+\hline%
+\end{tabular}%
+\end{figure}%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/power_vs_power.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/power_vs_current.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/power_vs_X.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/power_vs_Y.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/power_vs_ADC_sum.pdf}%
+\caption{}%
+\end{figure}
+
+%
+\clearpage%
+\section{Fixed amplitude fill pattern test}%
+The "Fixed output fill pattern test" is supposed to test the BPM parameters reliance onthe bunch shape that has a variable charge size. The signal suppled by the RF signal generatorwill have a fixed frequency and power output, this is then mixed with a gating signal, modulating the RF signal. The duty cycle of the gating signal is then changed and the BPM parameters recorded. This test will see how these parameters change as the duty cycle is changed.For example, ss the signal provided by the RF is constant the power at the BPM will drop the lower the duty cycle.\\\\%
+\textbf{The devices used for this test are:}\\\\%
+RF Source Rigol Technologies,DSG3030,DSG3B174500308,00.01.06\\%
+Gating Device Rigol Technologies,DSG3030,DSG3B174500308,00.01.06\\%
+Libera BPM with the Epics ID "TS-DI-EBPM-04:" and the MAC Address "00:d0:50:31:03:b9"\\%
+\\%
+\textbf{The parameters used in this test are:}\\\\%
+Frequency: 499.681 768 20MHz\\%
+Output Power: -60.00DBM\\%
+Pulse Period: 1.873us\\%
+Samples: 30\\
+
+%
+\begin{figure}[htbp]%
+\centering%
+\caption{Changing gate duty cycle, with fixed RF amplitude }%
+\begin{tabular}{|c|c|c|c|c|c|}%
+\hline%
+Duty Cycle&Input Power&BPM Current&X Position&Y Position&ADC Sum\\%
+(0{-}1)&(dBm)&(mA)&(mm)&(mm)&(Counts)\\%
+\hline%
+0.1&{-}91.51&0.03&0.11&0.27&1879375.0\\%
+0.13&{-}89.85&0.03&0.21&0.26&2274979.0\\%
+0.16&{-}88.4&0.04&0.26&0.25&2686890.0\\%
+0.19&{-}87.35&0.04&0.29&0.24&3034501.0\\%
+0.22&{-}86.22&0.05&0.32&0.24&3453669.0\\%
+0.26&{-}85.22&0.05&0.34&0.24&3875834.0\\%
+0.29&{-}84.32&0.06&0.36&0.25&4301211.0\\%
+0.32&{-}83.5&0.07&0.38&0.25&4726988.0\\%
+0.35&{-}82.87&0.07&0.38&0.26&5081966.0\\%
+0.38&{-}82.19&0.08&0.39&0.26&5495412.0\\%
+0.41&{-}81.57&0.08&0.39&0.28&5901990.0\\%
+0.44&{-}80.99&0.09&0.4&0.29&6306338.0\\%
+0.47&{-}80.45&0.09&0.41&0.29&6716430.0\\%
+0.5&{-}80.01&0.1&0.41&0.3&7059112.0\\%
+0.53&{-}79.52&0.11&0.42&0.3&7473186.0\\%
+0.57&{-}79.05&0.11&0.42&0.31&7891658.0\\%
+0.6&{-}78.59&0.12&0.43&0.31&8316464.0\\%
+0.63&{-}78.15&0.12&0.44&0.31&8747317.0\\%
+0.66&{-}77.73&0.13&0.44&0.31&9182467.0\\%
+0.69&{-}77.39&0.14&0.44&0.31&9546636.0\\%
+0.72&{-}77.0&0.14&0.44&0.31&9991186.0\\%
+0.75&{-}76.61&0.15&0.44&0.3&10443749.0\\%
+0.78&{-}76.24&0.15&0.44&0.3&10905941.0\\%
+0.81&{-}75.86&0.16&0.45&0.31&11382624.0\\%
+0.84&{-}75.56&0.17&0.45&0.31&11784808.0\\%
+0.88&{-}75.21&0.17&0.44&0.3&12267094.0\\%
+0.91&{-}74.9&0.18&0.43&0.29&12723856.0\\%
+0.94&{-}74.6&0.19&0.43&0.3&13161250.0\\%
+0.97&{-}74.31&0.19&0.43&0.31&13616952.0\\%
+0.99&{-}74.0&0.2&0.43&0.3&14113226.0\\%
+\hline%
+\end{tabular}%
+\end{figure}%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/DC_vs_power.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/DC_vs_current.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/DC_vs_X.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/DC_vs_Y.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/DC_vs_ADC_sum.pdf}%
+\caption{}%
+\end{figure}
+
+%
+\clearpage%
+\section{Scaled amplitude fill pattern test}%
+Scaled output fill pattern test intro text\\\\%
+\textbf{The devices used for this test are:}\\\\%
+RF Source Rigol Technologies,DSG3030,DSG3B174500308,00.01.06\\%
+Gating Device Rigol Technologies,DSG3030,DSG3B174500308,00.01.06\\%
+Libera BPM with the Epics ID "TS-DI-EBPM-04:" and the MAC Address "00:d0:50:31:03:b9"\\%
+\\%
+\textbf{The parameters used in this test are:}\\\\%
+Frequency: 499.681 768 20MHz\\%
+Desired Power: -60\\%
+Pulse Period: 1.873us\\%
+Samples: 30\\%
+Settling time: 3s\\
+
+%
+\begin{figure}[htbp]%
+\centering%
+\caption{Changing gate duty cycle, with fixed RF amplitude }%
+\begin{tabular}{|c|c|c|c|c|c|c|}%
+\hline%
+Duty Cycle&Output Power&Input Power&BPM Current&X Position&Y Position&ADC Sum\\%
+(0{-}1)&(dBm)&(dBm)&(mA)&(mm)&(mm)&(Counts)\\%
+\hline%
+0.1&{-}39.99&{-}73.82&0.2&0.38&0.08&14406707.0\\%
+0.13&{-}42.33&{-}73.77&0.2&0.38&0.09&14485897.0\\%
+0.16&{-}44.21&{-}74.17&0.2&0.38&0.09&13828508.0\\%
+0.19&{-}45.72&{-}74.45&0.19&0.38&0.1&13387542.0\\%
+0.22&{-}47.01&{-}73.69&0.21&0.39&0.11&14624983.0\\%
+0.26&{-}48.14&{-}73.84&0.2&0.4&0.12&14367662.0\\%
+0.29&{-}49.13&{-}73.81&0.2&0.4&0.14&14421846.0\\%
+0.32&{-}50.02&{-}73.83&0.2&0.4&0.15&14380350.0\\%
+0.35&{-}50.83&{-}74.01&0.2&0.41&0.17&14087897.0\\%
+0.38&{-}51.57&{-}74.51&0.19&0.41&0.18&13307205.0\\%
+0.41&{-}52.27&{-}74.6&0.19&0.42&0.2&13162619.0\\%
+0.44&{-}52.9&{-}74.62&0.19&0.43&0.21&13134781.0\\%
+0.47&{-}53.49&{-}74.61&0.19&0.43&0.22&13150311.0\\%
+0.5&{-}54.04&{-}74.7&0.18&0.44&0.22&13011297.0\\%
+0.53&{-}54.56&{-}74.72&0.18&0.44&0.22&12985000.0\\%
+0.57&{-}55.05&{-}74.75&0.18&0.44&0.23&12936980.0\\%
+0.6&{-}55.51&{-}74.73&0.18&0.44&0.24&12972953.0\\%
+0.63&{-}55.95&{-}74.72&0.18&0.44&0.25&12986074.0\\%
+0.66&{-}56.38&{-}74.72&0.18&0.44&0.26&12986325.0\\%
+0.69&{-}56.77&{-}74.01&0.2&0.44&0.25&14085248.0\\%
+0.72&{-}57.16&{-}74.09&0.2&0.44&0.26&13968770.0\\%
+0.75&{-}57.52&{-}74.1&0.2&0.43&0.26&13949694.0\\%
+0.78&{-}57.87&{-}74.06&0.2&0.43&0.27&14014376.0\\%
+0.81&{-}58.21&{-}74.06&0.2&0.43&0.27&14009020.0\\%
+0.84&{-}58.53&{-}74.08&0.2&0.43&0.28&13970969.0\\%
+0.88&{-}58.85&{-}74.05&0.2&0.42&0.28&14019718.0\\%
+0.91&{-}59.15&{-}74.05&0.2&0.42&0.28&14023020.0\\%
+0.94&{-}59.44&{-}74.06&0.2&0.43&0.29&14017485.0\\%
+0.97&{-}59.73&{-}74.04&0.2&0.43&0.3&14037531.0\\%
+0.99&{-}59.95&{-}73.98&0.2&0.43&0.3&14142492.0\\%
+\hline%
+\end{tabular}%
+\end{figure}%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/scaled_DC_vs_Out_power.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/scaled_DC_vs_In_power.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/scaled_DC_vs_current.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/scaled_DC_vs_X.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/scaled_DC_vs_Y.pdf}%
+\caption{}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\includegraphics[width=0.8\textwidth]{./Results/scaled_DC_vs_ADC_Sum.pdf}%
+\caption{}%
+\end{figure}
+
+%
+\end{document}
