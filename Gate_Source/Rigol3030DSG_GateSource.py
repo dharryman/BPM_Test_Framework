@@ -147,12 +147,12 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
     def get_pulse_period(self):
         """Override method, Gets the total pulse period of the modulation signal
 
-            Args: 
+        Args: 
 
-            Returns:
-                str: The value of the pulse period with the units concatenated
-                float: The pulse period in float form
-                str: The units that the pulse period is measured in 
+        Returns:
+            str: The value of the pulse period with the units concatenated
+            float: The pulse period in float form
+            str: The units that the pulse period is measured in 
 
         """
         self.pulse_period = self._telnet_query("PULM:PER?")
@@ -162,12 +162,12 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
     def set_pulse_period(self, period):
         """Override method, Sets the total pulse period of the modulation signal
 
-            Args:
-                period (float): The period of the pulse modulation signal is uS.
+        Args:
+            period (float): The period of the pulse modulation signal is uS.
 
-            Returns:
-                float: The pulse period in float form.
-                str: The value of the pulse period with the units concatenated.
+        Returns:
+            float: The pulse period in float form.
+            str: The value of the pulse period with the units concatenated.
         """
 
         if type(period) != float and type(period) != int and np.float64 != np.dtype(period):

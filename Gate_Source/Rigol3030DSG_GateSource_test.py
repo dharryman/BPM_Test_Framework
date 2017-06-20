@@ -19,6 +19,8 @@ def mocked_rigol_replies(input):
         return period
     elif input == "PULM:WIDT?":
         return dutycycle
+    elif input == "*IDN?":
+        return "Rigol Technologies,DSG3030"
 
 def mocked_rigol_writes(input):
     global output, period, dutycycle
@@ -40,9 +42,9 @@ class ExpectedDataTest(unittest.TestCase):
         super(ExpectedDataTest, cls).setUpClass()
 
     @patch("Gate_Source.Rigol3030DSG_GateSource._telnet_write")
-    @patch("Gate_Source.Rigol3030DSG_GateSource._telnet_read")
+    @patch("Gate_Source.Rigol3030DSG_GateSource._telnet_query", side_effect=mocked_rigol_replies)
     @patch("telnetlib.Telnet")
-    def setUp(self, mock_telnet, mock_telnet_read, mock_telnet_write):
+    def setUp(self, mock_telnet, mock_telnet_query, mock_telnet_write):
         # Stuff you run before each test
         self.GS_test_inst = Gate_Source.Rigol3030DSG_GateSource("0", 0, 0)
         unittest.TestCase.setUp(self)

@@ -29,7 +29,7 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
 
         Returns: 
         """
-        caput(self.epicsID + ".PROC", 1)
+        caput(self.epicsID + ".PROC", 1)  # Write to the .PROC data base to update all of the values
 
     def _read_epics_pv(self, pv):
         """Private method to read an Epics process variable.
@@ -40,8 +40,8 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns: 
             variant: Value of requested process variable.
         """
-        self._trigger_epics()
-        return caget(self.epicsID + pv)
+        self._trigger_epics()  # Update all values before reading
+        return caget(self.epicsID + pv)  # Read selected epics PV
 
     def _write_epics_pv(self, pv, value):
         """Private method to read an Epics process variable.
@@ -53,9 +53,8 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns: 
             variant: Value of requested process variable after writing to it
         """
-        caput(self.epicsID+pv, value)
+        caput(self.epicsID+pv, value)  # Write to EPICs PV
         return self._read_epics_pv(pv)
-
 
     def __init__(self, database, daq_type):
         """Initializes the Libera BPM device object and assigns it an ID. 
@@ -65,10 +64,12 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns:
 .
         """
-        self.epicsID = database+":signals:"+daq_type
-        self._write_epics_pv(".SCAN", 0)
-        self._trigger_epics()
-        print self.get_device_ID()
+        if type(database) and type(daq_type) != str:
+            raise TypeError
+        self.epicsID = database+":signals:"+daq_type  # Different signal types can be used
+        self._write_epics_pv(".SCAN", 0)  # Required so that values can be read from he database
+        self._trigger_epics()  # Triggers the first count
+        print self.get_device_ID()  # Tells the user they have connected to the device
 
     def get_X_position(self):
         """Override method, gets the calculated X position of the beam.
@@ -78,10 +79,10 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: X position in mm
         """
-        self._trigger_epics()
-        x = self._read_epics_pv(".X")
-        x = np.mean(x)
-        x = x/1000000.0
+        self._trigger_epics()  # Triggers the acquisition
+        x = self._read_epics_pv(".X")  # Gets the PV value
+        x = np.mean(x)  # Gets the mean PV value
+        x = x/1000000.0  # Converts from nm to mm
         return x
 
     def get_Y_position(self):
@@ -92,10 +93,10 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Y position in mm
         """
-        self._trigger_epics()
-        y = self._read_epics_pv(".Y")
-        y = np.mean(y)
-        y = y/1000000.0
+        self._trigger_epics()  # Triggers the acquisition
+        y = self._read_epics_pv(".Y")  # Gets the PV value
+        y = np.mean(y)  # Gets the mean PV value
+        y = y/1000000.0  # Converts from nm to mm
         return y
 
     def get_beam_current(self):
@@ -106,9 +107,10 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Current in mA
         """
-        self._trigger_epics()
-        daq_sum = self._read_epics_pv(".Sum")
-        daq_sum = np.mean(daq_sum)
+        # This function is not finished it needs to convert from ADC counts to mA
+        self._trigger_epics()  # Triggers the acquisition
+        daq_sum = self._read_epics_pv(".Sum")  # Gets the PV value
+        daq_sum = np.mean(daq_sum)  # Gets the mean PV value
         return daq_sum
 
     def get_input_power(self):
@@ -119,9 +121,10 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Input power in dBm
         """
-        self._trigger_epics()
-        daq_sum = self._read_epics_pv(".Sum")
-        daq_sum = np.mean(daq_sum)
+        # This function is not finished it needs to convert from ADC counts to dBm
+        self._trigger_epics()  # Triggers the acquisition
+        daq_sum = self._read_epics_pv(".Sum")  # Gets the PV value
+        daq_sum = np.mean(daq_sum)  # Gets the mean PV value
         return daq_sum
 
     def get_ADC_sum(self):
@@ -130,11 +133,12 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Args:
 
         Returns: 
-            float: Input power in dBm
+            int: Input power in dBm
         """
-        self._trigger_epics()
+        self._trigger_epics()  # Triggers the acquisition
         daq_sum = self._read_epics_pv(".Sum")
-        daq_sum = np.mean(daq_sum)
+        daq_sum = np.mean(daq_sum)  # Gets the PV value
+        daq_sum = np.round(daq_sum)  # Rounds the mean to the nearest integer
         return daq_sum
 
     def get_raw_BPM_buttons(self):
@@ -143,58 +147,59 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Args: 
 
         Returns: 
-            float: Raw signal from BPM A
-            float: Raw signal from BPM B
-            float: Raw signal from BPM C
-            float: Raw signal from BPM D
+            int: Raw signal from BPM A
+            int: Raw signal from BPM B
+            int: Raw signal from BPM C
+            int: Raw signal from BPM D
         """
-        self._trigger_epics()
-        a = self._read_epics_pv(".A")
+        self._trigger_epics()  # triggers the acquisition
+        a = self._read_epics_pv(".A")  # gets the PV value
         b = self._read_epics_pv(".B")
         c = self._read_epics_pv(".C")
         d = self._read_epics_pv(".D")
-        a = np.mean(a)
+        a = np.mean(a)  # gets the mean PV value
         b = np.mean(b)
         c = np.mean(c)
         d = np.mean(d)
+        a = np.round(a)  # Round the PV to the nearest integer
+        b = np.round(b)
+        c = np.round(c)
+        d = np.round(d)
         return a, b, c, d
-
 
     def get_normalised_BPM_buttons(self):
         """Override method, gets the normalised signal from each BPM.
 
         Args: 
-
         Returns: 
             float: Normalised signal from BPM A
             float: Normalised signal from BPM B
             float: Normalised signal from BPM C
             float: Normalised signal from BPM D
         """
-        self._trigger_epics()
-        a, b, c, d = self.get_raw_BPM_buttons()
-        sum_button = a + b + c + d
-        sum_button = sum_button/4.0
-        a = a/sum_button
-        b = b/sum_button
-        c = c/sum_button
-        d = d/sum_button
+        self._trigger_epics()  # Triggers the acquisition
+        a, b, c, d = self.get_raw_BPM_buttons()  # Gets the RAW bpm buttons
+        sum_button = a + b + c + d  # Calculates the BPM sum
+        sum_button = sum_button/4.0  # Gets the average BPM sum
+        a = a/sum_button  # Normalises the A button
+        b = b/sum_button  # Normalises the B button
+        c = c/sum_button  # Normalises the C button
+        d = d/sum_button  # Normalises the D button
         return (a,b,c,d)
 
     def get_device_ID(self):
         """Override method, gets the device's epics ID and MAC address 
 
         Args:
-
         Returns: 
             str: Device with epics channel ID and MAC address
         """
-        pv = ".X"
-        node = cainfo(self.epicsID + pv).host.split(":")[0]
-        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]
-        host_info = host_info.split("\n")[1]
-        index = host_info.find(":")
-        host_info = host_info[index - 2:index + 15]
+        pv = ".X"  # Pick a PV that is hosted on the device
+        node = cainfo(self.epicsID + pv).host.split(":")[0]  # Get the IP address of the host
+        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]  # Get info about the host using arp
+        host_info = host_info.split("\n")[1]  # Split the info sent back
+        index = host_info.find(":")  # Find the first ":", used in the MAC address
+        host_info = host_info[index - 2:index + 15]  # Get the MAC address
         return "Libera BPM with the Epics ID " + "\"" + self.epicsID + "\" and the MAC Address \"" + host_info + "\""
 
     def get_input_tolerance(self):
@@ -205,53 +210,9 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         that the power put into the device is not too high to break the device. 
         
         Args:
-            
         Returns: 
             float: max input power in dBm
         """
-        return -40
-
-    # libera:app - name
-    # libera:att:A
-    # libera:att:B
-    # libera:att:C
-    # libera:att:D
-    # libera:clocks:adc_frequency
-    # libera:clocks:sync_st_m
-    # libera:clocks:synchronize
-    # libera:clocks:tbt_frequency
-    # libera:dsp:adc_mask:offset
-    # libera:dsp:adc_mask:window
-    # libera:dsp:fa_data_type
-    # libera:dsp:kx
-    # libera:dsp:ky
-    # libera:dsp:off_q
-    # libera:dsp:off_x
-    # libera:dsp:off_y
-    # libera:dsp:phase_offset
-    # libera:dsp:tbt_decimation
-    # libera:max_adc
-    # libera:pll:compensate_offset
-    # libera:pll:locked
-    # libera:pll:max_err
-    # libera:pll:max_err_reset
-    # libera:pll:os_unlock_time
-    # libera:pll:os_unlock_time_reset
-    # libera:pll:vcxo_offset
-    # libera:triggers:t2:count
-    # libera:triggers:t2:delay
-    # libera:triggers:t2:source
-    # libera:version
-    # libera:signals:adc
-    # libera:signals:ddc_raw
-    # libera:signals:ddc_synth
-    # libera:signals:ddc_synth_d
-    # libera:signals:event
-    # libera:signals:fa
-    # libera:signals:pll
-    # libera:signals:sa
-    # libera:signals:tbt_window
-    # libera:signals:tdp_synth
-    # libera:signals:tdp_synth_d
+        return -40  # The max continuous input the spark can withstand in dBm
 
 

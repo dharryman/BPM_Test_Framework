@@ -31,9 +31,9 @@ class Simulated_BPMDevice(Generic_BPMDevice):
             
         """
         print("Simulated BPM device accessed on virtual channel")
-        self.attenuation = 12
-        self.RFSim = RFSim
-        self.GateSim = GateSim
+        self.attenuation = 12  # Typical attenuation when using a 4 way splitter
+        self.RFSim = RFSim  # Instance of the RF source used, allows the simulator to know what signals are output
+        self.GateSim = GateSim  # Instance of the Gate device, allows the simulator to know what signals are output
 
     def get_X_position (self):
         """Override method, gets the calculated X position of the beam.
@@ -43,7 +43,7 @@ class Simulated_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: X position in mm
         """
-        return 0.0
+        return 0.0  # With an equal splitter there should be no X shift
 
     def get_Y_position(self):
         """Override method, gets the calculated X position of the beam.
@@ -53,7 +53,7 @@ class Simulated_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Y position in mm
         """
-        return 0.0
+        return 0.0 # With an equal splitter there should be no Y shift
 
     def get_beam_current(self):
         """Override method, gets the beam current read by the BPMs. 
@@ -66,7 +66,7 @@ class Simulated_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Current in mA
         """
-        current = self.get_input_power()
+        current = self.get_input_power()  # Gets the current input power
         current = 1000 * (1.1193) ** current # Extracted equation from Rigol3030 vs Libera BPM measurements
         return current
 
@@ -81,13 +81,14 @@ class Simulated_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Input power in dBm
         """
-        if self.GateSim == None:
+        if self.GateSim == None:  # Checks if the simulation is using a gate source
             return self.RFSim.get_output_power()[0] - self.attenuation
-        elif self.GateSim.get_modulation_state() == False:
+        elif self.GateSim.get_modulation_state() == False:  # Checks if the simulated gate source is enabled
             return self.RFSim.get_output_power()[0] - self.attenuation
-        else:
-            dutycycle = self.GateSim.get_pulse_dutycycle()
-            log_cycle = 20 * np.log10(dutycycle)
+        else:  # gate source must be present and enabled
+            dutycycle = self.GateSim.get_pulse_dutycycle()  # Get the current duty cycle
+            log_cycle = 20 * np.log10(dutycycle)  # Convert the duty cycle into dB
+            # factor the duty cycle into the power read by the simulated BPM
             return (self.RFSim.get_output_power()[0] - np.absolute(log_cycle)) - self.attenuation
 
     def get_raw_BPM_buttons(self):
@@ -101,7 +102,7 @@ class Simulated_BPMDevice(Generic_BPMDevice):
             int: Raw signal from BPM C
             int: Raw signal from BPM D
         """
-        ADC = 100 * self.get_beam_current()
+        ADC = 1000 * self.get_beam_current()  # Gets a linear value for the BPM
         return ADC, ADC, ADC, ADC
 
     def get_normalised_BPM_buttons(self):
@@ -115,7 +116,7 @@ class Simulated_BPMDevice(Generic_BPMDevice):
             float: Normalised signal from BPM C
             float: Normalised signal from BPM D
         """
-        return 1, 1, 1, 1
+        return 1, 1, 1, 1  # Assumes all BPM pickups are equal
 
     def get_device_ID(self):
         """Override method, gets the type of BPM device that the device is
@@ -139,7 +140,7 @@ class Simulated_BPMDevice(Generic_BPMDevice):
             float: max input power in dBm
         """
         a, b, c, d = self.get_raw_BPM_buttons()
-        sum = a + b + c + d
+        sum = a + b + c + d  # Sums the BPM values used in the simulator
         return sum
 
     def get_input_tolerance(self):
@@ -154,5 +155,5 @@ class Simulated_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: max input power in dBm
         """
-        return -40
+        return -40  # Max tolerance of the simulated device, as low as the most susceptible real device
 

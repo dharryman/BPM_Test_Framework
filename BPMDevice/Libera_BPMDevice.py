@@ -30,7 +30,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             variant: Value of requested process variable.
         """
-        return caget(self.epicsID+pv)
+        return caget(self.epicsID+pv)  # Get PV data
 
     def __init__(self, dev_ID):
         """Initializes the Libera BPM device object and assigns it an ID. 
@@ -40,11 +40,11 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns:
 .
         """
-        if isinstance(dev_ID, int):
-            self.epicsID = "TS-DI-EBPM-" + str("%02d"% dev_ID) + ":"
+        if type(dev_ID) != int:  # Makes sure the ID is an integer
+            raise TypeError  # Raises a type error if integer is not used
         else:
-            self.epicsID = "TS-DI-EBPM-" + dev_ID + ":"
-        print "Opened connection to "+self.get_device_ID()
+            self.epicsID = "TS-DI-EBPM-" + str("%02d" % dev_ID) + ":" # Formats the ID into an EPICS ID
+        print "Opened connection to "+self.get_device_ID()  # Informs the user the device is now connected to
 
     def get_X_position(self):
         """Override method, gets the calculated X position of the beam.
@@ -53,7 +53,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: X position in mm
         """
-        return self._read_epics_pv("SA:X")
+        return self._read_epics_pv("SA:X")  # Reads the requested PV
 
     def get_Y_position(self):
         """Override method, gets the calculated Y position of the beam.
@@ -62,7 +62,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Y position in mm
         """
-        return self._read_epics_pv("SA:Y")
+        return self._read_epics_pv("SA:Y")  # Reads the requested PV
 
     def get_beam_current(self):
         """Override method, gets the beam current read by the BPMs. 
@@ -71,8 +71,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Current in mA
         """
-        return self._read_epics_pv("SA:CURRENT")
-
+        return self._read_epics_pv("SA:CURRENT")  # Reads the requested PV
 
     def get_input_power(self):
         """Override method, gets the input power of the signals input to the device 
@@ -81,7 +80,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: Input power in dBm
         """
-        return self._read_epics_pv("SA:POWER")
+        return self._read_epics_pv("SA:POWER")  # Reads the requested PV
 
     def get_raw_BPM_buttons(self):
         """Override method, gets the raw signal from each BPM.
@@ -96,7 +95,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         return (self._read_epics_pv("SA:A"),
                 self._read_epics_pv("SA:B"),
                 self._read_epics_pv("SA:C"),
-                self._read_epics_pv("SA:D"))
+                self._read_epics_pv("SA:D"))  # Reads the requested PVs
 
     def get_normalised_BPM_buttons(self):
         """Override method, gets the normalised signal from each BPM.
@@ -111,7 +110,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         return (self._read_epics_pv("SA:AN"),
                 self._read_epics_pv("SA:BN"),
                 self._read_epics_pv("SA:CN"),
-                self._read_epics_pv("SA:DN"))
+                self._read_epics_pv("SA:DN"))  # Reads the requested PVs
 
     def get_ADC_sum(self):
         """Override method, gets the sum of all of the buttons ADCs
@@ -122,8 +121,8 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             int: ADC sum in counts
         """
-        a, b, c, d = self.get_raw_BPM_buttons()
-        sum = a + b + c + d
+        a, b, c, d = self.get_raw_BPM_buttons()  # Reads the requested PVs
+        sum = a + b + c + d  # Sums the values of the PVs
         return sum
 
     def get_device_ID(self):
@@ -133,15 +132,14 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             str: Device with epics channel ID and MAC address
         """
-        pv = "SA:X"
-        node = cainfo(self.epicsID + pv).host.split(":")[0]
-        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]
-        host_info = host_info.split("\n")[1]
-        index = host_info.find(":")
-        host_info = host_info[index - 2:index + 15]
+        pv = "SA:X"   # Any PV hosts on the device could be used here
+        node = cainfo(self.epicsID + pv).host.split(":")[0]  # Gets the IP address that hosts the PV
+        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]  # Uses arp to get more info about the host
+        host_info = host_info.split("\n")[1]  # Splits the data about the host
+        index = host_info.find(":")  # Gets the first ":", used in the MAC address
+        host_info = host_info[index - 2:index + 15]  # Gets the devices MAC address
+        # returns the device type and the MAC address
         return "Libera BPM with the Epics ID "+ "\""+self.epicsID+"\" and the MAC Address \""+host_info+"\""
-
-
 
     def get_input_tolerance(self):
         """Override method, gets the maximum input power the device can take
@@ -154,5 +152,5 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: max input power in dBm
         """
-        return -20
+        return -20 # The maximum continuous input power the Brilliance can handle in dBm
 

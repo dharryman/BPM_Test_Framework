@@ -40,7 +40,7 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
             message (str): SCPI message to be sent to the SparkER
         Returns:
         """
-        self.tn.write(message + "\r\n")
+        self.tn.write(message + "\r\n") # Writes to the telnet device, adds termination characters
 
     def _telnet_read(self, timeout=1.0):
         """Private method that will read a telnet reply from the SparkER
@@ -49,7 +49,7 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
         Returns:
             str: Reply message from the SparkER
         """
-        return self.tn.read_until('\r\n',timeout).rstrip('\n')
+        return self.tn.read_until('\r\n',timeout).rstrip('\n') # Gets the reply, removes termination characters
 
     def _trigger_DAQ(self):
         """Private method to fire a software trigger to update the DAQ
@@ -61,9 +61,8 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
 
         Returns: 
         """
-        if self.autoTrig == 1:
-            self.tn.write("TRIG"+"\r\n")
-            self._telnet_read()
+        if self.autoTrig == 1: # If the hardware has no trigger connected, use a software trigger
+            self._telnet_query("TRIG") # Fires a software trigger to the hardware to update the values
         else:
             pass
 
@@ -78,12 +77,15 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
         self.autoTrig = autoTrig
         self.IP = IPaddress
         self.timeout = timeout
-        self.tn = telnetlib.Telnet(IPaddress, port, self.timeout)
+        self.tn = telnetlib.Telnet(IPaddress, port, self.timeout) # Opens telnet connection
         self.DeviceID = self.get_device_ID()
-        self._telnet_query("START")
+        self._telnet_query("START") # starts the device
         self._trigger_DAQ()
-        print("Opened connection to " + self.DeviceID)
-        self._telnet_read()
+        print("Opened connection to " + self.DeviceID)  # Informs the user the device is connected
+
+    def __del__(self):
+        self.tn.close()  # Disconnects telnet device
+        print("Closed connection to " + self.DeviceID)  # Informs the user the device is disconnected
 
     def get_X_position(self):
         """Override method, gets the calculated X position of the beam.
@@ -94,12 +96,12 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
             float: X position in mm
         """
         self._trigger_DAQ()
-        replies = self._telnet_query("TBT_XY 100")
-        replies = replies.rsplit()
-        replies = np.array(map(float, replies))
-        x = replies[0::2]
-        mean_x = np.mean(x)
-        mean_x = mean_x / 1000 # convert um to mm
+        replies = self._telnet_query("TBT_XY 100")  # Get 100 samples of XY data
+        replies = replies.rsplit()  # Split the data into lists
+        replies = np.array(map(float, replies))  # Convert the data into a float array
+        x = replies[0::2]  # Grab the X data only
+        mean_x = np.mean(x)  # Calculate the average of the X data
+        mean_x = mean_x / 1000  # convert um to mm
         return mean_x
 
     def get_Y_position(self):
@@ -111,11 +113,11 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
             float: Y position in mm
         """
         self._trigger_DAQ()
-        replies = self._telnet_query("TBT_XY 100")
-        replies = replies.rsplit()
-        replies = np.array(map(float, replies))
-        y = replies[1::2]
-        mean_y = np.mean(y)
+        replies = self._telnet_query("TBT_XY 100")  # Get 100 samples of XY data
+        replies = replies.rsplit()  # Split the data into lists
+        replies = np.array(map(float, replies))  # Convert the data into a float array
+        y = replies[1::2]  # Grab the Y data only
+        mean_y = np.mean(y)  # Calculate the average of the Y data
         mean_y = mean_y / 1000  # convert um to mm
         return mean_y
 
@@ -157,7 +159,6 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
         mean_sum = np.mean(bpm_sum)
         return mean_sum
 
-
     def get_raw_BPM_buttons(self):
         """Override method, gets the raw signal from each BPM.
 
@@ -170,21 +171,18 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
             float: Raw signal from BPM D
         """
         self._trigger_DAQ()
-        replies = self._telnet_query("ADC 200")
-        replies = replies.rsplit()
-        replies = np.array(map(float, replies))
-        a = replies[0::4]
-        b = replies[1::4]
-        c = replies[2::4]
-        d = replies[3::4]
-        rms_a = np.sqrt(np.mean(np.square(a)))
-        rms_b = np.sqrt(np.mean(np.square(b)))
-        rms_c = np.sqrt(np.mean(np.square(c)))
-        rms_d = np.sqrt(np.mean(np.square(d)))
+        replies = self._telnet_query("ADC 200")  # Get 200 samples of ADC data
+        replies = replies.rsplit()  # Convert the string in to a list of values
+        replies = np.array(map(float, replies))  # Convert these into a flaot array
+        a = replies[0::4]  # Get the A button data only
+        b = replies[1::4]  # Get the B button data only
+        c = replies[2::4]  # Get the C button data only
+        d = replies[3::4]  # Get the D button data only
+        rms_a = np.sqrt(np.mean(np.square(a)))  # Get the RMS value
+        rms_b = np.sqrt(np.mean(np.square(b)))  # Get the RMS value
+        rms_c = np.sqrt(np.mean(np.square(c)))  # Get the RMS value
+        rms_d = np.sqrt(np.mean(np.square(d)))  # Get the RMS value
         return rms_a, rms_b, rms_c, rms_d
-
-
-
 
     def get_normalised_BPM_buttons(self):
         """Override method, gets the normalised signal from each BPM.
@@ -197,13 +195,13 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
             float: Normalised signal from BPM C
             float: Normalised signal from BPM D
         """
-        a, b, c, d = self.get_raw_BPM_buttons()
-        sum = a + b + c + d
-        sum = sum/4
-        a = a/sum
-        b = b/sum
-        c = c/sum
-        d = d/sum
+        a, b, c, d = self.get_raw_BPM_buttons()  # Get the RAW ADC button values
+        sum = a + b + c + d  # Get the sum of these values
+        sum = sum/4  # Get the average BPM value
+        a = a/sum  # Normalise the BPM value
+        b = b/sum  # Normalise the BPM value
+        c = c/sum  # Normalise the BPM value
+        d = d/sum  # Normalise the BPM value
         return a, b, c, d
 
     def get_device_ID(self):
@@ -215,11 +213,11 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
             str: Device with epics channel ID and MAC address
         """
 
-        node = self.IP
-        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]
-        host_info = host_info.split("\n")[1]
-        index = host_info.find(":")
-        host_info = host_info[index - 2:index + 15]
+        node = self.IP  # Get the devices IP address
+        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]  # arp with the device
+        host_info = host_info.split("\n")[1]  # split the information the host gives
+        index = host_info.find(":")  # find the index of the first ":" (used in the MAC address)
+        host_info = host_info[index - 2:index + 15]  # Return the MAC address
         return "Spark BPM \"" + host_info + "\""
 
     def get_ADC_sum(self):
@@ -231,19 +229,19 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
 
         Args:
         Returns: 
-            float: max input power in dBm
+            int: sum of the ADC buttons
         """
         self._trigger_DAQ()
         # This is not finished, only records ADC counts, not in mA
-        replies = self._telnet_query("TBT_QSUM 100")
-        replies = replies.rsplit()
-        replies = np.array(map(float, replies))
-        q = replies[0::2]
-        bpm_sum = replies[1::2]
-        mean_q = np.mean(q)
-        mean_sum = np.mean(bpm_sum)
-        return mean_sum
-
+        replies = self._telnet_query("TBT_QSUM 100")  # Grab 100 samples of Q sum data
+        replies = replies.rsplit()  # Split the values into a list
+        replies = np.array(map(float, replies))  # Convert the list into a float array
+        q = replies[0::2]  # Grab the Q data only
+        bpm_sum = replies[1::2]  #  Grab the Sum data only
+        mean_q = np.mean(q)  # Calculate the mean Q value
+        mean_sum = np.mean(bpm_sum)  # Calculate the mean Sum value
+        mean_sum = np.round(mean_sum)  # round the Sum to an integer
+        return mean_sum  # return the mean sum
 
     def get_input_tolerance(self):
         """Override method, gets the maximum input power the device can take
@@ -257,5 +255,5 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: max input power in dBm
         """
-        return -40
+        return -40  # The maximum continuous input power the spark can handle in dBm
 
