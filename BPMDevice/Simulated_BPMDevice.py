@@ -128,6 +128,16 @@ class Simulated_BPMDevice(Generic_BPMDevice):
         return "Simulated BPM Device"
 
     def get_ADC_sum(self):
+        """Override method, gets the maximum input power the device can take
+
+        The devices will break if the input power is too high, as such, each device has their
+        own tolerances, this function will return this tolerance. It should be used to ensure 
+        that the power put into the device is not too high to break the device. 
+
+        Args:
+        Returns: 
+            float: max input power in dBm
+        """
         a, b, c, d = self.get_raw_BPM_buttons()
         sum = a + b + c + d
         return sum

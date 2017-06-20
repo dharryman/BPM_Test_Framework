@@ -49,18 +49,16 @@ class Libera_BPMDevice(Generic_BPMDevice):
     def get_X_position(self):
         """Override method, gets the calculated X position of the beam.
         
-        Args:
-            
+        Args:   
         Returns: 
             float: X position in mm
         """
         return self._read_epics_pv("SA:X")
 
     def get_Y_position(self):
-        """Override method, gets the calculated X position of the beam.
+        """Override method, gets the calculated Y position of the beam.
         
-        Args:
-            
+        Args:  
         Returns: 
             float: Y position in mm
         """
@@ -70,7 +68,6 @@ class Libera_BPMDevice(Generic_BPMDevice):
         """Override method, gets the beam current read by the BPMs. 
         
         Args:
-            
         Returns: 
             float: Current in mA
         """
@@ -81,7 +78,6 @@ class Libera_BPMDevice(Generic_BPMDevice):
         """Override method, gets the input power of the signals input to the device 
         
         Args:
-            
         Returns: 
             float: Input power in dBm
         """
@@ -91,7 +87,6 @@ class Libera_BPMDevice(Generic_BPMDevice):
         """Override method, gets the raw signal from each BPM.
         
         Args: 
-            
         Returns: 
             float: Raw signal from BPM A
             float: Raw signal from BPM B
@@ -107,7 +102,6 @@ class Libera_BPMDevice(Generic_BPMDevice):
         """Override method, gets the normalised signal from each BPM.
         
         Args: 
-            
         Returns: 
             float: Normalised signal from BPM A
             float: Normalised signal from BPM B
@@ -120,6 +114,14 @@ class Libera_BPMDevice(Generic_BPMDevice):
                 self._read_epics_pv("SA:DN"))
 
     def get_ADC_sum(self):
+        """Override method, gets the sum of all of the buttons ADCs
+
+        A+B+C+D
+
+        Args:
+        Returns: 
+            int: ADC sum in counts
+        """
         a, b, c, d = self.get_raw_BPM_buttons()
         sum = a + b + c + d
         return sum
@@ -128,7 +130,6 @@ class Libera_BPMDevice(Generic_BPMDevice):
         """Override method, gets the device's epics ID and MAC address 
         
         Args:
-            
         Returns: 
             str: Device with epics channel ID and MAC address
         """
@@ -150,7 +151,6 @@ class Libera_BPMDevice(Generic_BPMDevice):
         that the power put into the device is not too high to break the device. 
 
         Args:
-
         Returns: 
             float: max input power in dBm
         """

@@ -82,7 +82,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
 
     # API Methods
     def get_device_ID(self):
-        """Gets the Device Id of the Rigol3030
+        """Override method, Gets the Device Id of the Rigol3030
         
         Args:
             
@@ -95,7 +95,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
         return "Gating Device "+self.DeviceID
 
     def turn_on_modulation(self):
-        """Turns on the pulse modulation.
+        """Override method, Turns on the pulse modulation.
 
         When used in conjunction with the Rigol3030 RF SigGen class, This 
         function will turn on the pulse output, and modulation the RF output 
@@ -112,7 +112,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
         return self.get_modulation_state()
 
     def turn_off_modulation(self):
-        """Turns on the pulse modulation.
+        """Override method, Turns on the pulse modulation.
 
         When used in conjunction with the Rigol3030 RF SigGen class, This 
         function will turn off the pulse output, and modulation the RF output 
@@ -129,7 +129,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
         return self.get_modulation_state()
 
     def get_modulation_state(self):
-        """Checks if the pulse modulation is on or off
+        """Override method, Checks if the pulse modulation is on or off
 
         Args: 
 
@@ -145,7 +145,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
         return self.modulation_state
 
     def get_pulse_period(self):
-        """Gets the total pulse period of the modulation signal
+        """Override method, Gets the total pulse period of the modulation signal
 
             Args: 
 
@@ -160,7 +160,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
 
 
     def set_pulse_period(self, period):
-        """Sets the total pulse period of the modulation signal
+        """Override method, Sets the total pulse period of the modulation signal
 
             Args:
                 period (float): The period of the pulse modulation signal is uS.
@@ -179,7 +179,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
         return self.get_pulse_period()
 
     def get_pulse_dutycycle(self):
-        """Gets the duty cycle of the modulation signal
+        """Override method, Gets the duty cycle of the modulation signal
 
         The duty cycle of the signal will be set as a decimal of the pulse period.
         If the pulse period is 100us and the duty cycle input is 0.3, the pulse that 
@@ -199,7 +199,7 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
 
 
     def set_pulse_dutycycle(self, dutycycle):
-        """Gets the duty cycle of the modulation signal
+        """Override method, Gets the duty cycle of the modulation signal
 
         The duty cycle of the signal will be set as a decimal of the pulse period.
         If the pulse period is 100us and the duty cycle input is 0.3, the pulse that 
@@ -222,6 +222,15 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
 
 
     def invert_pulse_polarity(self, polarity):
+        """Inverts the polarity of the gate signal
+        
+        True will invert the signal, false will return it to it's default state. 
+
+        Args: 
+            polarity (bool): boolean that decides the inversion state
+        Returns:
+            bool: The current state of the inversion
+        """
         if type(polarity) != bool:
             raise TypeError
 
@@ -233,4 +242,10 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
         return self.get_pulse_polarity()
 
     def get_pulse_polarity(self):
+        """Checks if the signal is inverted or not
+
+        Args: 
+        Returns:
+            bool: The current state of the inversion
+        """
         return self._telnet_query("PULM:POL?")

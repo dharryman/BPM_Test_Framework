@@ -223,6 +223,16 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
         return "Spark BPM \"" + host_info + "\""
 
     def get_ADC_sum(self):
+        """Override method, gets the maximum input power the device can take
+
+        The devices will break if the input power is too high, as such, each device has their
+        own tolerances, this function will return this tolerance. It should be used to ensure 
+        that the power put into the device is not too high to break the device. 
+
+        Args:
+        Returns: 
+            float: max input power in dBm
+        """
         self._trigger_DAQ()
         # This is not finished, only records ADC counts, not in mA
         replies = self._telnet_query("TBT_QSUM 100")

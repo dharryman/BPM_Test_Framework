@@ -102,6 +102,14 @@ class Generic_BPMDevice():
 
     @abstractmethod
     def get_ADC_sum(self):
+        """Abstract method for override, gets the sum of all of the buttons ADCs
+        
+        A+B+C+D
+
+        Args:
+        Returns: 
+            int: ADC sum in counts
+        """
         pass
 
 
