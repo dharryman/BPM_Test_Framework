@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import time
 
 
+
 def Template(RF,
              BPM,
              argument1 = 1,

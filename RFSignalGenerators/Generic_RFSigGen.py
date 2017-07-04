@@ -142,6 +142,7 @@ class Generic_RFSigGen():
     @abstractmethod
     def set_output_power_limit(self, limit):
         """Abstract method for override that will set a hardware limit for the output power
+        
         Args:
 
         Returns:
@@ -152,6 +153,7 @@ class Generic_RFSigGen():
     @abstractmethod
     def get_output_power_limit(self):
         """Abstract method for override that will get the hardware limit for the output power
+        
         Args:
 
         Returns:

@@ -110,9 +110,6 @@ class ExpectedDataTest(unittest.TestCase):
     def test_get_output_power_limit(self, mock_telnet_query, mock_telnet_write):
         self.assertEqual(self.RF_test_inst.get_output_power_limit(), (-40, "-40.00DBM"))
 
-
-
-
     def assertWarns(self, warning, callable, *args, **kwds):
         with warnings.catch_warnings(record=True) as warning_list:
             warnings.simplefilter('always')
