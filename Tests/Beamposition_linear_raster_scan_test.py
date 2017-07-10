@@ -37,7 +37,7 @@ def Beamposition_linear_raster_scan_test(RF,
              PA,
              rf_power,
              rf_frequency,
-             total_attenuation,
+             nominal_attenuation,
              x_points,
              y_points,
              settling_time,
@@ -79,7 +79,7 @@ def Beamposition_linear_raster_scan_test(RF,
     measured_y = []
 
     ###########################################################
-    gradient = np.linspace(0.001, 10, x_points)
+    gradient = np.linspace(0.0001, 2, x_points)
     inv_gradient = gradient[::-1]
     a = gradient
     b = inv_gradient
@@ -89,8 +89,8 @@ def Beamposition_linear_raster_scan_test(RF,
     b_total = []
     c_total = []
     d_total = []
-    for index in np.linspace(-5, 5, y_points):  # number of Y samples
-        offset = 5  # base power from the device
+    for index in np.linspace(-1, 1, y_points):  # number of Y samples
+        offset = 1  # base power from the device
         a_total = np.append(a_total, (a + index) + offset)
         b_total = np.append(b_total, (b + index) + offset)
         c_total = np.append(c_total, (c - index) + offset)
@@ -99,42 +99,62 @@ def Beamposition_linear_raster_scan_test(RF,
 
     for A, B, C, D in zip(a_total, b_total, c_total, d_total):
 
-        abcd_total = A + B + C + D
+        abcd_total = A+B+C+D
+        A = A/abcd_total
+        B = B/abcd_total
+        C = C/abcd_total
+        D = D/abcd_total
 
-        A = round(A / abcd_total, 2)
-        B = round(B / abcd_total, 2)
-        C = round(C / abcd_total, 2)
-        D = round(D / abcd_total, 2)
+        PA.set_global_attenuation(nominal_attenuation)  # sets nominal attenuation value
+        power_total = RF.get_output_power()[0] # gets power value in dBm
+        power_total = 10.0 ** (power_total / 10.0)  # converts power from dBm
+        power_split = power_total / 4.0
 
-        new_x = calc_x_pos(A, B, C, D)# change these to log values!!!
-        new_y = calc_y_pos(A, B, C, D)
+        linear_nominal_attenuation = 10.0 ** (-nominal_attenuation / 10.0)
+        power_split = power_split * linear_nominal_attenuation
+        A_pwr = power_split
+        B_pwr = power_split
+        C_pwr = power_split
+        D_pwr = power_split
+
+        power_total = A_pwr + B_pwr + C_pwr + D_pwr
+
+        A_pwr = A * power_total
+        B_pwr = B * power_total
+        C_pwr = C * power_total
+        D_pwr = D * power_total
+
+        A = 10*np.log10(A_pwr / power_split)
+        B = 10*np.log10(B_pwr / power_split)
+        C = 10*np.log10(C_pwr / power_split)
+        D = 10*np.log10(D_pwr / power_split)
+
+        print A,B,C,D
+
+        new_x = calc_x_pos(A_pwr, B_pwr, C_pwr, D_pwr)
+        new_y = calc_y_pos(A_pwr, B_pwr, C_pwr, D_pwr)
         predicted_x.append(new_x)
         predicted_y.append(new_y)
 
-        A = quarter_round(A * total_attenuation)
-        B = quarter_round(B * total_attenuation)
-        C = quarter_round(C * total_attenuation)
-        D = quarter_round(D * total_attenuation)
-
-        A, B, C, D = C, D, A, B
-
-        PA.set_channel_attenuation("A", A)
-        PA.set_channel_attenuation("B", B)
-        PA.set_channel_attenuation("C", C)
-        PA.set_channel_attenuation("D", D)
+        attenuation = PA.get_channel_attenuation("A")
+        PA.set_channel_attenuation("A", attenuation - A)
+        attenuation = PA.get_channel_attenuation("B")
+        PA.set_channel_attenuation("B", attenuation - B)
+        attenuation = PA.get_channel_attenuation("C")
+        PA.set_channel_attenuation("C", attenuation - C)
+        attenuation = PA.get_channel_attenuation("D")
+        PA.set_channel_attenuation("D", attenuation - D)
 
         time.sleep(settling_time)
-
         measured_x.append(BPM.get_X_position())
         measured_y.append(BPM.get_Y_position())
-        print A+B+C+D
-        print BPM.get_X_position(), new_x
-        print BPM.get_Y_position(), new_y
 
-    plt.scatter(measured_x, measured_y, s=10)
-    plt.scatter(predicted_x, predicted_y, s=10, c='r', marker=u'+')
-    plt.xlim(-10, 10)
-    plt.ylim(-10, 10)
+
+
+    plt.scatter(measured_x, measured_y, s=20)
+    plt.scatter(predicted_x, predicted_y, s=20, c='r', marker=u'+')
+    plt.xlim(-10.5, 10.5)
+    plt.ylim(-10.5, 10.5)
 
     # Readies devices that are used in the test so that they can be added to the report
     device_names = []
@@ -146,9 +166,12 @@ def Beamposition_linear_raster_scan_test(RF,
     parameter_names = []
     parameter_names.append("Fixed RF Output Power: " + str(rf_power) +" dBm")
     parameter_names.append("Fixed Rf Output Frequency: " + str(rf_frequency)+" MHz")
-    parameter_names.append("Maximum Attenuation: " + str(total_attenuation)+" dB")
+    parameter_names.append("Maximum Attenuation: " + str(nominal_attenuation)+" dB")
     parameter_names.append("Minimum Attenuation: " + str(x_points)+" dB")
     parameter_names.append("Steps between min and max attenuations: " + str(y_points))
+    plt.xlabel("Horizontal Beam Position (mm)")
+    plt.ylabel("Vertical Beam Position (mm)")
+    plt.grid(True)
 
     if report == None:
         # If no report is entered as an input to the test, simply display the results

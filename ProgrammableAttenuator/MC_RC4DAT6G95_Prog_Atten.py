@@ -116,9 +116,3 @@ class MC_RC4DAT6G95_Prog_Atten(Generic_Prog_Atten):
         reply = self._telnet_query(":CHAN:"+channel+":Att?")
         return float(reply)
 
-
-    def increment_channel_attenuation(self, channel, step):
-        pass
-
-    def decrement_channel_attenuation(self, channel, step):
-        pass

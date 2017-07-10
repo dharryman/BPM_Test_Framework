@@ -113,6 +113,9 @@ def Beamposition_raster_scan_test(RF,
     parameter_names.append("Maximum Attenuation: " + str(attenuator_max)+"dB")
     parameter_names.append("Minimum Attenuation: " + str(attenuator_min)+"dB")
     parameter_names.append("Steps between min and max attenuations: " + str(attenuator_steps))
+    plt.xlabel("Horizontal Beam Position (mm)")
+    plt.ylabel("Vertical Beam Position (mm)")
+    plt.grid(True)
 
     if report == None:
         # If no report is entered as an input to the test, simply display the results

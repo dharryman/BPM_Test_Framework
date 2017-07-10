@@ -23,11 +23,3 @@ class Generic_Prog_Atten():
     @abstractmethod
     def get_channel_attenuation(self, channel):
         pass
-
-    @abstractmethod
-    def increment_channel_attenuation(self, channel, step):
-        pass
-
-    @abstractmethod
-    def decrement_channel_attenuation(self,channel, step):
-        pass
