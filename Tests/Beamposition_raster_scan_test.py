@@ -81,11 +81,12 @@ def Beamposition_raster_scan_test(RF,
         time.sleep(1)
         measured_x.append(BPM.get_X_position())
         measured_y.append(BPM.get_Y_position())
-
-        predicted_a = index[2] # Swop with opposites, this is because they are attenuation not power totals
-        predicted_b = index[3]
-        predicted_c = index[1]
-        predicted_d = index[0]
+        power_out = RF.get_output_power()[0]
+        power_out = power_out - 6  # Reduce signal by a factor of four as it goes through a 4 way splitter
+        predicted_a = power_out - index[0]
+        predicted_b = power_out - index[1]
+        predicted_c = power_out - index[2]
+        predicted_d = power_out - index[3]
         predicted_a = 10 ** (predicted_a / 10.0)
         predicted_b = 10 ** (predicted_b / 10.0)
         predicted_c = 10 ** (predicted_c / 10.0)

@@ -98,60 +98,77 @@ def Beamposition_linear_raster_scan_test(RF,
     #############################################################
 
     for A, B, C, D in zip(a_total, b_total, c_total, d_total):
+        # Steps here go as follows:
+        # - Take the four values given to the loop, and split them into ratios that will sum into 1
+        # - Set a nominal attenuation on the attenuator, so amplification can be simulated if needed
+        # - Read the power set by the RF and convert it from dB into mW, then divide it by 4 as this is what
+        #   the splitter will do.
+        # - Put each of the four power values through the nominal attenuation value of each channel, summing these
+        #   values after will give the total power delivered into the BPM.
+        # - The total power delivered into the BPM can then be multiplied by the ratios given in step 1 to
+        #   calculate the desired power to be delivered into each BPM input.
+        # - Converting these powers into dB with respect to the origional power delivered to the input, will give the
+        #   change in dB value of each attenuator.
 
-        abcd_total = A+B+C+D
-        A = A/abcd_total
-        B = B/abcd_total
-        C = C/abcd_total
-        D = D/abcd_total
+        abcd_total = A + B + C + D  # Sum the values given by the loop before
+        A = A / abcd_total  # Normalise the A value into a ratio
+        B = B / abcd_total  # Normalise the B value into a ratio
+        C = C / abcd_total  # Normalise the C value into a ratio
+        D = D / abcd_total  # Normalise the D value into a ratio
 
-        PA.set_global_attenuation(nominal_attenuation)  # sets nominal attenuation value
-        power_total = RF.get_output_power()[0] # gets power value in dBm
-        power_total = 10.0 ** (power_total / 10.0)  # converts power from dBm
-        power_split = power_total / 4.0
+        PA.set_global_attenuation(nominal_attenuation)  # sets nominal attenuation value on each channel
+        power_total = RF.get_output_power()[0] # Gets the power output by the RF, total power into the system
+        power_total = 10.0 ** (power_total / 10.0)  # converts power output from dBm into mW
+        power_split = power_total / 4.0  # Divide the power by 4 as it goes through a four way splitter
 
+        # Attenuation effect in decimal of the nominal attenuation value
         linear_nominal_attenuation = 10.0 ** (-nominal_attenuation / 10.0)
+        # The power delivered into each BPM input after passing through the attenuator with nominal values
+        # Assuming no losses through cables etc...
+        # Set the power delivered into each BPM as this value
         power_split = power_split * linear_nominal_attenuation
         A_pwr = power_split
         B_pwr = power_split
         C_pwr = power_split
         D_pwr = power_split
 
-        power_total = A_pwr + B_pwr + C_pwr + D_pwr
+        power_total = A_pwr + B_pwr + C_pwr + D_pwr  # Total power into the BPM after each signal is attenuated
 
+        # Desired power into the each input, given their power ratio, and power delivered under nominal attenuation
         A_pwr = A * power_total
         B_pwr = B * power_total
         C_pwr = C * power_total
         D_pwr = D * power_total
 
-        A = 10*np.log10(A_pwr / power_split)
-        B = 10*np.log10(B_pwr / power_split)
-        C = 10*np.log10(C_pwr / power_split)
-        D = 10*np.log10(D_pwr / power_split)
+        # Calculate new attenuation values by converting the ratio of desired power and previous power into dB
+        # Then set the attenuation as the difference between this and the nominal attenuation value.
+        A = nominal_attenuation - quarter_round(10*np.log10(A_pwr / power_split))
+        B = nominal_attenuation - quarter_round(10*np.log10(B_pwr / power_split))
+        C = nominal_attenuation - quarter_round(10*np.log10(C_pwr / power_split))
+        D = nominal_attenuation - quarter_round(10*np.log10(D_pwr / power_split))
 
-        print A,B,C,D
+        # Set the attenuation as the values just calculated.
+        PA.set_channel_attenuation("A", A)
+        PA.set_channel_attenuation("B", B)
+        PA.set_channel_attenuation("C", C)
+        PA.set_channel_attenuation("D", D)
 
-        new_x = calc_x_pos(A_pwr, B_pwr, C_pwr, D_pwr)
-        new_y = calc_y_pos(A_pwr, B_pwr, C_pwr, D_pwr)
-        predicted_x.append(new_x)
-        predicted_y.append(new_y)
+        ######################################
+        time.sleep(settling_time)  # Let the attenuator values settle
+        ######################################
+        measured_x.append(BPM.get_X_position())  # Take a reading of X position
+        measured_y.append(BPM.get_Y_position())  # Take a reading of Y position
 
-        attenuation = PA.get_channel_attenuation("A")
-        PA.set_channel_attenuation("A", attenuation - A)
-        attenuation = PA.get_channel_attenuation("B")
-        PA.set_channel_attenuation("B", attenuation - B)
-        attenuation = PA.get_channel_attenuation("C")
-        PA.set_channel_attenuation("C", attenuation - C)
-        attenuation = PA.get_channel_attenuation("D")
-        PA.set_channel_attenuation("D", attenuation - D)
+        # Given the power values of each input, calculate the expected position
+        predicted_x.append(calc_x_pos(A_pwr, B_pwr, C_pwr, D_pwr))
+        predicted_y.append(calc_y_pos(A_pwr, B_pwr, C_pwr, D_pwr))
 
-        time.sleep(settling_time)
-        measured_x.append(BPM.get_X_position())
-        measured_y.append(BPM.get_Y_position())
-
+        predicted_x.append(calc_x_pos(A, B, C, D))
+        predicted_y.append(calc_y_pos(A, B, C, D))
 
 
-    plt.scatter(measured_x, measured_y, s=20)
+
+    plt.scatter(measured_x, measured_y, s=10)
     plt.scatter(predicted_x, predicted_y, s=20, c='r', marker=u'+')
     plt.xlim(-10.5, 10.5)
     plt.ylim(-10.5, 10.5)

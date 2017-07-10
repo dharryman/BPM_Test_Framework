@@ -2,6 +2,7 @@
 import RFSignalGenerators
 import BPMDevice
 import Gate_Source
+import ProgrammableAttenuator
 import Tests
 import Latex_Report
 import time
