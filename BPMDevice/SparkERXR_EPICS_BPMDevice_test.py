@@ -56,7 +56,8 @@ class ExpectedDataTest(unittest.TestCase):
 
     @patch("BPMDevice.SparkERXR_EPICS_BPMDevice.get_device_ID", side_effect=mock_get_device_ID)
     def test_device_ID(self, mock_dev_ID):
-        self.assertEqual(self.BPM_test_inst.get_device_ID(),"Libera BPM with the MAC Address \"00:d0:50:31:03:b9\"")
+        self.assertEqual(self.BPM_test_inst.get_device_ID(),
+                         "Libera BPM with the MAC Address \"00:d0:50:31:03:b9\"")
         self.assertTrue(mock_dev_ID.called)
 
     # @patch("BPMDevice.SparkERXR_EPICS_BPMDevice._read_epics_pv", side_effect=mocked_BPM_replies)

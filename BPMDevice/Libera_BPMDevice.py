@@ -1,13 +1,13 @@
 from pkg_resources import require
-require("numpy")
-require("cothread")
+require("cothread==2.14")
 from cothread.catools import *
 import cothread
 from Generic_BPMDevice import *
 from subprocess import Popen, PIPE
+import numpy as np
 
 class Libera_BPMDevice(Generic_BPMDevice):
-    """Libera Brilliance BPM Device class that uses Epics to communicate with PVs.
+    """Libera Electron BPM Device class that uses Epics to communicate with PVs.
 
     All of the methods here will attempt to be generic enough to work for Libera
     devices that have the same PV names. If these names change, then a different 
@@ -36,7 +36,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
         """Initializes the Libera BPM device object and assigns it an ID. 
         
         Args:
-            dev_ID (str/int): The two digit ID number assigned to that specific BPM device. 
+            dev_ID (str/int): The ID number assigned to that specific BPM device. 
         Returns:
 .
         """
@@ -44,7 +44,24 @@ class Libera_BPMDevice(Generic_BPMDevice):
             raise TypeError  # Raises a type error if integer is not used
         else:
             self.epicsID = "TS-DI-EBPM-" + str("%02d" % dev_ID) + ":" # Formats the ID into an EPICS ID
+
+        pv = "SA:X"  # Any PV hosts on the device could be used here
+        node = connect(self.epicsID + pv, cainfo=True).host.split(":")[0]  # Get the IP address of the host
+        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]  # Uses arp to get more info about the host
+        host_info = host_info.split("\n")[1]  # Splits the data about the host
+        index = host_info.find(":")  # Gets the first ":", used in the MAC address
+        host_info = host_info[index - 2:index + 15]  # Gets the devices MAC address
+        self.macaddress = host_info
         print "Opened connection to "+self.get_device_ID()  # Informs the user the device is now connected to
+
+    def __del__(self):
+        """Informs the user that this object has been destroyed 
+        
+        Args:
+        Returns:
+         
+        """
+        print "Closed connection to "+self.get_device_ID()
 
     def get_X_position(self):
         """Override method, gets the calculated X position of the beam.
@@ -132,14 +149,8 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             str: Device with epics channel ID and MAC address
         """
-        pv = "SA:X"   # Any PV hosts on the device could be used here
-        node = cainfo(self.epicsID + pv).host.split(":")[0]  # Gets the IP address that hosts the PV
-        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]  # Uses arp to get more info about the host
-        host_info = host_info.split("\n")[1]  # Splits the data about the host
-        index = host_info.find(":")  # Gets the first ":", used in the MAC address
-        host_info = host_info[index - 2:index + 15]  # Gets the devices MAC address
-        # returns the device type and the MAC address
-        return "Libera BPM with the Epics ID "+ "\""+self.epicsID+"\" and the MAC Address \""+host_info+"\""
+
+        return "Libera BPM with the Epics ID "+ "\""+self.epicsID+"\" and the MAC Address \""+self.macaddress+"\""
 
     def get_input_tolerance(self):
         """Override method, gets the maximum input power the device can take
@@ -152,5 +163,5 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns: 
             float: max input power in dBm
         """
-        return -20 # The maximum continuous input power the Brilliance can handle in dBm
+        return -20 # The maximum continuous input power the Electron can handle in dBm
 

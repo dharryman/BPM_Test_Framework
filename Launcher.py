@@ -1,3 +1,6 @@
+from pkg_resources import require
+require("cothread==2.13")
+
 # application boilerplate
 import RFSignalGenerators
 import BPMDevice

@@ -16,7 +16,9 @@ class SparkER_SCPI_BPMDevice(Generic_BPMDevice):
     This class is for use in her BPM testing framework. 
 
     Attributes:
-        epicsID (str): Channel identifier string that will be used to access PVs.  
+        IP Address (str): IP address of the device
+        Port (int): Port to communicate to the device on 
+        Timeout (float): Timeout to wait for a response 
     """
 
     def _telnet_query(self, message, timeout=1.0):

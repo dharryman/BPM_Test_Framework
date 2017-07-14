@@ -9,11 +9,14 @@ import numpy as np
 class Simulated_BPMDevice(Generic_BPMDevice):
     """Simulated BPM device used for testing without the hardware. 
 
-    All of the abstract methods in te parent class must be overridden. This class has
+    All of the abstract methods in the parent class must be overridden. This class has
     access to the RF device used in the testing so that it can read in the signals that
     are supposedly provided to it via it's RF inputs. 
 
     Attributes:
+        attenuation (float): Attenuation produced by the virtual splitter and cables
+        RFSim (RF Simulator Obj) : Reference to an RF simulator 
+        GateSim (Gate Source Simulator Obj) : Reference to a gate source simulator
     """
 
     def __init__(self, RFSim, GateSim=None):
@@ -31,7 +34,7 @@ class Simulated_BPMDevice(Generic_BPMDevice):
             
         """
         print("Simulated BPM device accessed on virtual channel")
-        self.attenuation = 12  # Typical attenuation when using a 4 way splitter
+        self.attenuation = 12  # Typical attenuation when using a 4 way splitter and cables
         self.RFSim = RFSim  # Instance of the RF source used, allows the simulator to know what signals are output
         self.GateSim = GateSim  # Instance of the Gate device, allows the simulator to know what signals are output
 

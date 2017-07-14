@@ -41,7 +41,8 @@ def Beamposition_linear_raster_scan_test(RF,
              x_points,
              y_points,
              settling_time,
-             report=None):
+             report=None,
+             sub_directory=""):
     """One line introduction to the test
 
     A more detailed introduction to the test, this can be over multiple lines
@@ -163,8 +164,6 @@ def Beamposition_linear_raster_scan_test(RF,
         predicted_x.append(calc_x_pos(A_pwr, B_pwr, C_pwr, D_pwr))
         predicted_y.append(calc_y_pos(A_pwr, B_pwr, C_pwr, D_pwr))
 
-        predicted_x.append(calc_x_pos(A, B, C, D))
-        predicted_y.append(calc_y_pos(A, B, C, D))
 
 
 
@@ -195,8 +194,8 @@ def Beamposition_linear_raster_scan_test(RF,
         plt.show()
     else:
         # If there is a report for the data to be copied to, do so.
-        plt.savefig("beam_position_raster_scan" + ".pdf")
+        plt.savefig(sub_directory+"beam_position_raster_scan" + ".pdf")
         report.setup_test("beam_position_raster_scan", intro_text, device_names, parameter_names)
-        report.add_figure_to_test("beam_position_raster_scan")
+        report.add_figure_to_test(sub_directory+"beam_position_raster_scan")
 
 

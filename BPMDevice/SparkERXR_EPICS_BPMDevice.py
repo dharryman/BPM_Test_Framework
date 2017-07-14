@@ -1,6 +1,5 @@
 from pkg_resources import require
-require("numpy")
-require("cothread")
+require("cothread==2.14")
 from cothread.catools import *
 import cothread
 from Generic_BPMDevice import *
@@ -69,7 +68,19 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         self.epicsID = database+":signals:"+daq_type  # Different signal types can be used
         self._write_epics_pv(".SCAN", 0)  # Required so that values can be read from he database
         self._trigger_epics()  # Triggers the first count
-        print self.get_device_ID()  # Tells the user they have connected to the device
+
+        pv = ".X"  # Pick a PV that is hosted on the device
+        node = connect(self.epicsID + pv, cainfo=True).host.split(":")[0]  # Get the IP address of the host
+        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]  # Get info about the host using arp
+        host_info = host_info.split("\n")[1]  # Split the info sent back
+        index = host_info.find(":")  # Find the first ":", used in the MAC address
+        host_info = host_info[index - 2:index + 15]  # Get the MAC address
+        self.macaddress = host_info
+        print "Opened link with" + self.get_device_ID()  # Tells the user they have connected to the device
+
+    def __del__(self):
+        print "Closed link with" + self.get_device_ID()  # Tells the user they have connected to the device
+
 
     def get_X_position(self):
         """Override method, gets the calculated X position of the beam.
@@ -194,13 +205,8 @@ class SparkERXR_EPICS_BPMDevice(Generic_BPMDevice):
         Returns: 
             str: Device with epics channel ID and MAC address
         """
-        pv = ".X"  # Pick a PV that is hosted on the device
-        node = cainfo(self.epicsID + pv).host.split(":")[0]  # Get the IP address of the host
-        host_info = Popen(["arp", "-n", node], stdout=PIPE).communicate()[0]  # Get info about the host using arp
-        host_info = host_info.split("\n")[1]  # Split the info sent back
-        index = host_info.find(":")  # Find the first ":", used in the MAC address
-        host_info = host_info[index - 2:index + 15]  # Get the MAC address
-        return "Libera BPM with the Epics ID " + "\"" + self.epicsID + "\" and the MAC Address \"" + host_info + "\""
+
+        return "Libera BPM with the Epics ID " + "\"" + self.epicsID + "\" and the MAC Address \"" + self.macaddress + "\""
 
     def get_input_tolerance(self):
         """Override method, gets the maximum input power the device can take
