@@ -6,7 +6,7 @@ from Generic_BPMDevice import *
 from subprocess import Popen, PIPE
 import numpy as np
 
-class Libera_BPMDevice(Generic_BPMDevice):
+class Electron_BPMDevice(Generic_BPMDevice):
     """Libera Electron BPM Device class that uses Epics to communicate with PVs.
 
     All of the methods here will attempt to be generic enough to work for Libera
@@ -40,10 +40,10 @@ class Libera_BPMDevice(Generic_BPMDevice):
         Returns:
 .
         """
-        if type(dev_ID) != int:  # Makes sure the ID is an integer
+        if type(dev_ID) != str:  # Makes sure the ID is an integer
             raise TypeError  # Raises a type error if integer is not used
         else:
-            self.epicsID = "TS-DI-EBPM-" + str("%02d" % dev_ID) + ":" # Formats the ID into an EPICS ID
+            self.epicsID = dev_ID # TS-DI-EBPM-04:
 
         pv = "SA:X"  # Any PV hosts on the device could be used here
         node = connect(self.epicsID + pv, cainfo=True).host.split(":")[0]  # Get the IP address of the host
@@ -150,7 +150,7 @@ class Libera_BPMDevice(Generic_BPMDevice):
             str: Device with epics channel ID and MAC address
         """
 
-        return "Libera BPM with the Epics ID "+ "\""+self.epicsID+"\" and the MAC Address \""+self.macaddress+"\""
+        return "Libera Electron BPM with the Epics ID "+ "\""+self.epicsID+"\" and the MAC Address \""+self.macaddress+"\""
 
     def get_input_tolerance(self):
         """Override method, gets the maximum input power the device can take

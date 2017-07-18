@@ -11,11 +11,11 @@ class MC_RC4DAT6G95_Prog_Atten(Generic_Prog_Atten):
         self.DeviceID = ""
         self.timeout = timeout  # timeout for the telnet comms
         self.tn = telnetlib.Telnet(ipaddress, port, self.timeout)  # connects to the telnet device
-        print "Connected to Programmable Attenuator "+ self.get_device_ID()  # gets the device of the telnet device, makes sure its the right one
+        print "Connected to "+ self.get_device_ID()  # gets the device of the telnet device, makes sure its the right one
 
     def __del__(self):
         self.tn.close()
-        print "Closed connection to Programmable Attenuator "+ self.DeviceID
+        print "Closed connection to "+ self.DeviceID
 
     def _telnet_query(self, message):
         """Private method that will send a message over telnet to the device
@@ -81,7 +81,7 @@ class MC_RC4DAT6G95_Prog_Atten(Generic_Prog_Atten):
         if model != "RC4DAT-6G-95":
             raise Exception("Wrong device connected")
         self.DeviceID = model
-        return model
+        return "Programmable Attenuator "+model
 
     def set_global_attenuation(self, attenuation):
         self._check_attenuation(attenuation)

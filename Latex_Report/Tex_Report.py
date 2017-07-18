@@ -1,6 +1,5 @@
 from pkg_resources import require
 require("numpy")
-require("cothread")
 require("matplotlib")
 from pylatex import Document, Section, Figure, NoEscape, Command, Tabular
 import matplotlib.pyplot as plt
@@ -13,7 +12,9 @@ def takespread(sequence, num):
     for i in range(num):
         yield sequence[int(ceil(i * length / num))]
 
-class Test_Report():
+class Tex_Report():
+
+
     """A LaTeX test report object with APIs for writing the BPM report.
 
     This class uses the pylatex Document class as a base, it creates an
@@ -98,7 +99,7 @@ class Test_Report():
         """
         self.doc.append(NoEscape(r'\clearpage'))
         with self.doc.create(Section(section_title)):
-            self.doc.append(NoEscape(introduction_text + r'\\\\'))
+            self.doc.append(NoEscape(introduction_text))
             self.doc.append(NoEscape(r'\textbf{The devices used for this test are:}\\\\'))
             for i in device_names:
                 self.doc.append(NoEscape(i + r'\\'))
@@ -179,6 +180,8 @@ class Test_Report():
         Returns:
             
         """
+        self.doc.generate_pdf(clean_tex=False)
+        self.doc.generate_pdf(clean_tex=False)
         self.doc.generate_pdf(clean_tex=False)
 
 

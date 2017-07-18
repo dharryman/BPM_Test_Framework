@@ -59,7 +59,10 @@ def Template(RF,
 
     # Perform the test and plot the results
     x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    y = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    y = []
+    for index in x:
+        y.append(2*index)
+
     plt.plot(x,y)
 
     if report == None:

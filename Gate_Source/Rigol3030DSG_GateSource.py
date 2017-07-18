@@ -89,8 +89,8 @@ class Rigol3030DSG_GateSource(Generic_GateSource):
             str: The DeviceID of the gate source.
         """
         self.DeviceID = self._telnet_query("*IDN?")  # Asks the device to identify itself
-        if self.DeviceID[0:26] != "Rigol Technologies,DSG3030":  # Checks the right device is connected
-            raise Exception("Wrong hardware device connected")  # Error if wrong device
+        #if self.DeviceID[0:26] != "Rigol Technologies,DSG3030":  # Checks the right device is connected
+        #    raise Exception("Wrong hardware device connected")  # Error if wrong device
         return "Gating Device "+self.DeviceID  # Returns the device info
 
     def turn_on_modulation(self):

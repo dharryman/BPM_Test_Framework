@@ -1,5 +1,4 @@
 from pkg_resources import require
-
 require("numpy")
 require("cothread")
 require("matplotlib")
@@ -8,48 +7,75 @@ import matplotlib.pyplot as plt
 import time
 
 
-def Beam_Power_Dependance(RF,
-                          BPM,
+def Beam_Power_Dependance(
+                          RFObject,
+                          BPMObject,
                           frequency,
                           start_power=-100,
                           end_power=0,
                           samples=10,
                           settling_time=1,
-                          report=None,
+                          ReportObject=None,
                           sub_directory=""):
-    """Tests the relationship between beam current and X Y position read from the BPM.
+    """Tests the relationship between RF output power and values read from the BPM.
 
-    An RF signal is output and then read back using the RF and BPM objects respectively. 
-    The signal is ramped up in power at a single frequency. The number of samples to take, 
+    An RF signal is output, and then different parameters are measured from the BPM. 
+    The signal is linearly ramped up in dBm at a single frequency. The number of samples to take, 
     and settling time between each measurement can be decided using the arguments. 
 
     Args:
-        RF (RFSignalGenerator Obj): RF interface object.
-        BPM (BPMDevice Obj): BPM interface object.
-        frequency (float/str): Output frequency for the tests, can be a float, where 
-            the units will default to MHz, or can be a string where the units can be 
-            explicitly stated e.g. kHz, Hz.
-        start_power (float/str): Starting output power for the tests, default value is 
-            -100 dBm. The input values can be floats, if so, the units will default to 
-            dBm. A string input can be used to explicitly state the units, e.g. dBW, mV.
-        end_power (float/str): Final output power for the tests, default value is 0 dBm.
-            The input values can be floats, if so, the units will default to dBm. A 
-            string input can be used to explicitly state the units, e.g. dBW, mV.
+        RFObject (RFSignalGenerator Obj): Object to interface with the RF hardware.
+        BPMObject (BPMDevice Obj): Object to interface with the BPM hardware.
+        frequency (float): Output frequency for the tests, set as a float that will 
+            use the assumed units of MHz. 
+        start_power (float): Starting output power for the tests, default value is 
+            -100 dBm. The input values are floats and dBm is assumed. 
+        end_power (float): Final output power for the tests, default value is 0 dBm.
+            The input values are floats and dBm assumed. 
         samples (int): Number of samples take is this value + 1.
         settling_time (float): Time in seconds, that the program will wait in between 
-            setting an  output power, and reading an input power. 
-        report (LaTeX Report Obj): Specific report that the test results will be recorded 
+            setting an  output power on the RF, and reading the values of the BPM. 
+        ReportObject (LaTeX Report Obj): Specific report that the test results will be recorded 
             to. If no report is sent to the test then it will just display the results in 
             a graph. 
+        sub_directory (str): String that can change where the graphs will be saved to.
 
-Returns:
-    float array: Beam current values during the test. 
-    float array: Horizontal position of the BPM during the test.
-    float array: Vertical position of the BPM  during the test.
-"""
+    Returns:
+        float array: Power output from the RF
+        float array: Power read at the BPM
+        float array: Beam Current read at the BPM
+        float array: X Positions read from the BPM
+        float array: Y Positions read from the BPM
+    """
 
-    # Text that will be placed at the start of the test in the report.
-    intro_text = "Text that will describe the test"
+
+    intro_text = r"""Tests the relationship between RF output power and values read from the BPM. 
+    An RF signal is output, and then different parameters are measured from the BPM. 
+    The signal is linearly ramped up in dBm at a single frequency. The number of samples to take, 
+    and settling time between each measurement can be decided using the arguments. \\~\\
+    Args:\\
+        RFObject (RFSignalGenerator Obj): Object to interface with the RF hardware.\\
+        BPMObject (BPMDevice Obj): Object to interface with the BPM hardware.\\
+        frequency (float): Output frequency for the tests, set as a float that will 
+            use the assumed units of MHz. \\
+        start\_power (float): Starting output power for the tests, default value is 
+            -100 dBm. The input values are floats and dBm is assumed. \\
+        end\_power (float): Final output power for the tests, default value is 0 dBm.
+            The input values are floats and dBm assumed. \\
+        samples (int): Number of samples take is this value + 1.\\
+        settling\_time (float): Time in seconds, that the program will wait in between 
+            setting an  output power on the RF, and reading the values of the BPM. \\
+        ReportObject (LaTeX Report Obj): Specific report that the test results will be recorded 
+            to. If no report is sent to the test then it will just display the results in 
+            a graph. \\
+        sub\_directory (str): String that can change where the graphs will be saved to.\\~\\
+    Returns:\\
+        float array: Power output from the RF\\
+        float array: Power read at the BPM\\
+        float array: Beam Current read at the BPM\\
+        float array: X Positions read from the BPM\\
+        float array: Y Positions read from the BPM\\~\\
+    """
 
 
 
@@ -61,8 +87,8 @@ Returns:
 
     # Get the device names for the report
     device_names = []
-    device_names.append(RF.get_device_ID())
-    device_names.append(BPM.get_device_ID())
+    device_names.append(RFObject.get_device_ID())
+    device_names.append(BPMObject.get_device_ID())
 
     # Get the parameter values for the report
     parameter_names = []
@@ -74,9 +100,9 @@ Returns:
 
     # Set the initial state of the RF device
     power = np.linspace(start_power, end_power, samples)  # Creates samples to test
-    RF.set_frequency(frequency)
-    RF.set_output_power(start_power)
-    RF.turn_on_RF()
+    RFObject.set_frequency(frequency)
+    RFObject.set_output_power(start_power)
+    RFObject.turn_on_RF()
     time.sleep(settling_time)
 
     # Build up the arrays where the final values will be saved
@@ -89,20 +115,20 @@ Returns:
 
     # Perform the test
     for index in power:
-        RF.set_output_power(index)  # Set next output power value
+        RFObject.set_output_power(index)  # Set next output power value
         time.sleep(settling_time)  # Wait for signal to settle
-        beam_current = np.append(beam_current, BPM.get_beam_current())  # record beam current
-        X_pos = np.append(X_pos, BPM.get_X_position())  # record X pos
-        Y_pos = np.append(Y_pos, BPM.get_Y_position())  # record Y pos
-        output_power = np.append(output_power, RF.get_output_power()[0])
-        input_power = np.append(input_power, BPM.get_input_power())
-        ADC_sum = np.append(ADC_sum, BPM.get_ADC_sum())
+        beam_current = np.append(beam_current, BPMObject.get_beam_current())  # record beam current
+        X_pos = np.append(X_pos, BPMObject.get_X_position())  # record X pos
+        Y_pos = np.append(Y_pos, BPMObject.get_Y_position())  # record Y pos
+        output_power = np.append(output_power, RFObject.get_output_power()[0])
+        input_power = np.append(input_power, BPMObject.get_input_power())
+        ADC_sum = np.append(ADC_sum, BPMObject.get_ADC_sum())
 
     #turn off the RF
-    RF.turn_off_RF()
+    RFObject.turn_off_RF()
 
     # add the test details to the report
-    report.setup_test(test_name, intro_text, device_names, parameter_names)
+    ReportObject.setup_test(test_name, intro_text, device_names, parameter_names)
 
     # make a caption and headings for a table of results
     caption = "Beam Power Dependence Results"
@@ -111,7 +137,7 @@ Returns:
     data = [output_power, input_power, beam_current, X_pos, Y_pos, ADC_sum]
 
     # copy the values to the report
-    report.add_table_to_test('|c|c|c|c|c|c|', data, headings, caption)
+    ReportObject.add_table_to_test('|c|c|c|c|c|c|', data, headings, caption)
 
     # Get the plot values in a format thats easy to iterate
     format_plot = []# x axis, y axis, x axis title, y axis title, title of file, caption
@@ -130,7 +156,7 @@ Returns:
         plt.savefig(sub_directory+index[4])
         plt.cla()  # Clear axis
         plt.clf()  # Clear figure
-        report.add_figure_to_test(sub_directory + index[4], "")
+        ReportObject.add_figure_to_test(sub_directory + index[4], "")
 
     # return the full data sets
     return output_power, input_power, beam_current, X_pos, Y_pos
