@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import time
 
 
-def Beam_Power_Dependance(
+def Beam_Power_Dependence(
                           RFObject,
                           BPMObject,
                           frequency,

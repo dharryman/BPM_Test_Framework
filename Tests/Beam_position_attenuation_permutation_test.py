@@ -174,3 +174,6 @@ def Beam_position_attenuation_permutation_test(
         plt.savefig(sub_directory+"beam_position_attenuation_permutation" + ".pdf")
         ReportObject.setup_test("beam_position_attenuation_permutation", intro_text, device_names, parameter_names)
         ReportObject.add_figure_to_test(sub_directory+"beam_position_attenuation_permutation")
+
+    return measured_x, measured_y, predicted_x, predicted_y
+

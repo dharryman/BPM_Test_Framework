@@ -30,7 +30,7 @@ report = Latex_Report.Tex_Report("BPMTestReport")
 dls_RF_frequency = 499.6817682
 dls_bunch = 1.87319
 subdirectory = "./Results/"
-settling_time = 2
+settling_time = 0
 
 Tests.Beam_position_equidistant_grid_raster_scan_test(
     RFObject=RF,
@@ -60,7 +60,7 @@ Tests.Beam_position_attenuation_permutation_test(
 
 ProgAtten.set_global_attenuation(0)
 
-Tests.Beam_Power_Dependance(
+Tests.Beam_Power_Dependence(
     RFObject=RF,
     BPMObject=BPM,
     frequency=dls_RF_frequency,

@@ -1,4 +1,4 @@
-from Beam_Power_Dependance import *
+from Beam_Power_Dependence import *
 from Fixed_voltage_amplitude_fill_pattern_test import *
 from Scaled_voltage_amplitude_fill_pattern_test import *
 from Template import *
